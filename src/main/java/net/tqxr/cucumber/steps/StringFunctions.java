@@ -4,35 +4,43 @@ import net.tqxr.cucumber.support.DataContainer;
 import net.tqxr.cucumber.support.SpringStep;
 import net.tqxr.lib.stringfunctions.StringUtil;
 
-public class StringFunctions extends SpringStep {
+class StringFunctions extends SpringStep<String, StringUtil> {
 
-    public StringFunctions(StringUtil testComponent, DataContainer<String> dataContainer) {
+    StringFunctions(StringUtil testComponent, DataContainer<String> dataContainer) {
+        this.testComponent = testComponent;
+        this.dataContainer = dataContainer;
+    }
 
-        Given("^A String \"([^\"]*)\"$",
-                (String theString) -> {
-                    dataContainer.source = theString;
-                });
+    protected void setUpTestSteps() {
 
-        When("^the string is capitalised$",
-                () -> {
-                    String sourceString = dataContainer.source;
-                    dataContainer.actual = testComponent.transformUpper(sourceString);
-                });
-
-        When("^the string is uncapitalised$",
-                () -> {
-                    String sourceString = dataContainer.source;
-                    dataContainer.actual = testComponent.transformLower(sourceString);
-                });
-
-        Then("^the string becomes upper-case \"([^\"]*)\"$",
-                (final String expectedString) -> {
-                    String actualString = dataContainer.actual;
-                    assertThat(actualString)
-                            .isEqualTo(expectedString)
-                            .withFailMessage("Actual must match expected.");
-
-                });
+        Given("^a String \"([^\"]*)\"$", this::setSourceString);
+        When("^the string is capitalised$", this::capitaliseString);
+        When("^the string is uncapitalised$", this::uncapitaliseString);
+        Then("^the string becomes upper-case \"([^\"]*)\"$", this::verifyString);
 
     }
+
+    void setSourceString(final String sourceString) {
+        dataContainer.setSource(sourceString);
+    }
+
+    void capitaliseString() {
+        String sourceString = dataContainer.getSource();
+        String actualString = testComponent.transformUpper(sourceString);
+        dataContainer.setActual(actualString);
+    }
+
+    void uncapitaliseString() {
+        String sourceString = dataContainer.getSource();
+        dataContainer.setActual(testComponent.transformLower(sourceString));
+    }
+
+    void verifyString(final String expectedString) {
+        dataContainer.setExpected(expectedString);
+        String actualString = dataContainer.getActual();
+        assertThat(actualString)
+                .isEqualTo(expectedString)
+                .withFailMessage("Actual must match expected.");
+    }
+
 }
