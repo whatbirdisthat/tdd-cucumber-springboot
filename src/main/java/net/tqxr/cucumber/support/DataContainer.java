@@ -31,7 +31,32 @@ public class DataContainer<T> {
     private List<T> tCollection;
 
     public T source;
+
+    public T getSource() {
+        return source;
+    }
+
+    public void setSource(T source) {
+        this.source = source;
+    }
+
     public T expected;
+    public void setExpected(T expected) {
+        this.expected = expected;
+    }
+    public T getExpected() {
+        return expected;
+    }
+
     public T actual;
+
+    public void setActual(T actual) {
+
+        this.actual = actual;
+    }
+
+    public T getActual() {
+        return actual;
+    }
 }
 
