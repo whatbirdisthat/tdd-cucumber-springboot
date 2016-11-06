@@ -109,5 +109,8 @@ mvn test -q -Dsurefire.printSummary=false
 ```
 
 Setting `printSummary` to `false` also suppresses the actual test report produced by the custom `listener` which makes it
-fairly useless to show a nicely formatted report in "agile-dox" style.
+fairly useless to show a nicely formatted report in "agile-dox" style using `mvn test` and surefire.
+
+To see an agile-dox style report, it would be fairly straightforward to create a script that reads the .xml files in
+`/target/surefire-reports/` and produces some pretty console output, post test.
 
