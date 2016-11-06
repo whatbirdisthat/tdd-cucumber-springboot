@@ -22,6 +22,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <groovy.version>2.4.7</groovy.version>
+        <gmavenplus.version>1.5</gmavenplus.version>
         <cucumber.version>1.2.5</cucumber.version>
     </properties>
 
@@ -142,7 +144,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <excludedGroups>net.tqxr.testframework.categories.DeliberatelyFail,
-                                net.tqxr.testframework.categories.Bloated</excludedGroups>
+                                net.tqxr.testframework.categories.Bloated
+                            </excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -152,16 +155,19 @@
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <reportFormat>brief</reportFormat>
-                    <printSummary>true</printSummary>
+                    <reportFormat>plain</reportFormat>
+                    <printSummary>false</printSummary>
+                    <testFailureIgnore>true</testFailureIgnore>
                     <properties>
                         <property>
                             <name>listener</name>
@@ -172,6 +178,34 @@
                     <threadCount>10</threadCount>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmavenplus.version}</version>
+                <executions>
+                    <execution>
+                        <id>call-groovy</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script>file:///${project.basedir}/src/scripts/groovy/showTestReports.groovy</script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>${groovy.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
         </plugins>
     </build>
 
