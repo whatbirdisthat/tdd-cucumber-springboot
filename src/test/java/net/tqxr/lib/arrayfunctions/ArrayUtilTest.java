@@ -1,7 +1,9 @@
 package net.tqxr.lib.arrayfunctions;
 
 import net.tqxr.lib.stringfunctions.ArrayUtil;
+import net.tqxr.testframework.categories.DeliberatelyFail;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,6 +39,24 @@ public class ArrayUtilTest {
         String[] arrA = new String[] { "two", "three" };
         ArrayList<String> arrB = new ArrayList<>();
         arrB.add("one");
+
+        ArrayUtil<String> arrayUtil = new ArrayUtil<>();
+
+        Collection<String> strings = arrayUtil.mergeArrays(arrB, arrA);
+
+        String[] expectedStrings =new String[] {"one", "two", "three"};
+
+        assertThat(strings)
+                .containsExactly(expectedStrings);
+
+    }
+
+    @Test
+    @Category(DeliberatelyFail.class)
+    public void arrayUtilCanMergeArrayIntoArrayListFAIL() {
+        String[] arrA = new String[] { "222", "333" };
+        ArrayList<String> arrB = new ArrayList<>();
+        arrB.add("111");
 
         ArrayUtil<String> arrayUtil = new ArrayUtil<>();
 
