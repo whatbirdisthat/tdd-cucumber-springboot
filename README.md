@@ -86,6 +86,13 @@ The deliberate fails will be reported by the TQXR TestResultListener, eg:
 mvn test -Pdeliberate_fails
 ```
 
+During development of the reporting classes, it was handy to be able to run two profiles, showing
+both passing and deliberately failing unit tests.
+
+```bash
+mvn clean test -q -Pexample_tests
+```
+
 
 # Noise
 
@@ -95,3 +102,12 @@ DEBUG messages.
 
 There is a default setting in `resources/application.properties` to take care of this, and the setting can be overridden
 on the command line for incidental requirements to see what's going on under the hood.
+
+To reduce the noise produced when running unit tests, try:
+```bash
+mvn test -q -Dsurefire.printSummary=false
+```
+
+Setting `printSummary` to `false` also suppresses the actual test report produced by the custom `listener` which makes it
+fairly useless to show a nicely formatted report in "agile-dox" style.
+
