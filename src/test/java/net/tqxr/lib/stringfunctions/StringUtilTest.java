@@ -1,5 +1,6 @@
 package net.tqxr.lib.stringfunctions;
 
+import net.tqxr.testframework.categories.TestDescription;
 import net.tqxr.testframework.categories.DeliberatelyFail;
 import net.tqxr.testframework.categories.ExampleTests;
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 @Category(ExampleTests.class)
+@TestDescription("String utilities for manipulation of Strings.")
 public class StringUtilTest {
 
     private StringUtil stringUtil;
