@@ -5,10 +5,6 @@ import org.springframework.stereotype.Component;
 @Component
 class TestNameTransformer {
 
-    public TestNameTransformer() {
-        System.out.println("****************************************");
-    }
-
     String transformLowerCaseFirstLetterToUpperCase(String inputString) {
 
         // http://stackoverflow.com/a/33352947/1185717
