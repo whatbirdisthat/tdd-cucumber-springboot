@@ -32,4 +32,20 @@ class TestNameTransformer {
         String spacedWords = transformCamelTestNameToSpacedWords(upperFirstLetter);
         return spacedWords;
     }
+
+
+    String passFailSkip(boolean isFailed, boolean isIgnored) {
+        AsciiColourHelper.AsciiCode colouredString = AsciiColourHelper.GREEN;
+        char statusChar = '\u2714'; //
+        if (isFailed) {
+            statusChar = '\u2718';
+            colouredString = AsciiColourHelper.RED;
+        }
+        if (isIgnored) {
+            statusChar = '\u2615'; // ☕ cute coffee cup :)
+            colouredString = AsciiColourHelper.YELLOW;
+        }
+        return String.format("%s%s%s ", colouredString, statusChar, AsciiColourHelper.RESET);
+    }
+
 }

@@ -36,6 +36,12 @@ class AsciiColourHelper {
             return this;
         }
 
+        void reset() {
+            background = -1;
+            bold = -1;
+            underline = -1;
+        }
+
         @Override
         public String toString() {
 

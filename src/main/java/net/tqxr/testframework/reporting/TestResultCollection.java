@@ -42,20 +42,6 @@ class TestResultCollection {
         return testResults.get(className).get(testName);
     }
 
-    private String passFailSkip(TestResult t) {
-        AsciiColourHelper.AsciiCode colouredString = AsciiColourHelper.GREEN;
-        char statusChar = '\u2714'; //
-        if (t.isFailed()) {
-            statusChar = '\u2718';
-            colouredString = AsciiColourHelper.RED;
-        }
-        if (t.isIgnored()) {
-            statusChar = '\u2615'; // ☕ cute coffee cup :)
-            colouredString = AsciiColourHelper.YELLOW;
-        }
-        return String.format("%s%s%s ", colouredString, statusChar, AsciiColourHelper.RESET);
-    }
-
 
     @Override
     public String toString() {
@@ -93,7 +79,8 @@ class TestResultCollection {
                             AsciiColourHelper.RESET)
                     ;
                 }
-                String testStatus = String.format("%s", passFailSkip(t));
+                String testStatus = String.format("%s",
+                        testNameTransformer.passFailSkip(t.isFailed(), t.isIgnored()));
                 outputString.append(String.format("%s %s\n", testStatus, testWords));
             }
         }
