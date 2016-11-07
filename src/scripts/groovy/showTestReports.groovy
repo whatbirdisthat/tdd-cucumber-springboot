@@ -33,7 +33,7 @@ list.each {
         failureCount ++;
         print RED.underline()
     } else {
-        print BLUE.underline()
+        print CYAN.underline()
     }
 
     print '' + testsuite.@name
@@ -53,7 +53,7 @@ list.each {
         }
         print "  " + testNameTransformer.transformTestName(it.@name as String)
         if (isSkipped) {
-            print "(${it.skipped.@message})"
+            print " (${it.skipped.@message.join(', ')})"
         }
 
         println "${RESET}"
@@ -65,4 +65,7 @@ println "\n\n"
 
 if (failureCount > 0) {
     exit(1)
+} else {
+    println "\n\n${GREEN.underline()}SUCCESS!${RESET}\n"
+    GREEN.reset()
 }
