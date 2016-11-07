@@ -36,9 +36,9 @@ class TestNameTransformer {
 
     String passFailSkip(boolean isFailed, boolean isIgnored) {
         AsciiColourHelper.AsciiCode colouredString = AsciiColourHelper.GREEN;
-        char statusChar = '\u2714'; //
+        char statusChar = '\u2714'; // tick mark
         if (isFailed) {
-            statusChar = '\u2718';
+            statusChar = '\u2718'; // cross
             colouredString = AsciiColourHelper.RED;
         }
         if (isIgnored) {

@@ -7,6 +7,7 @@ import net.tqxr.lib.stringfunctions.StringUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,10 +37,13 @@ public class StringFunctionsTest {
         JavaBackend.INSTANCE.set(fakeJavaBackend);
         testComponent = new StringFunctions(fakeStringUtil, fakeDataContainer);
 
+        Mockito.reset(fakeJavaBackend);
     }
 
     @Test
     public void canInitialiseWithMockComponentAndContainer() {
+
+        testComponent.setUpTestSteps();
 
         verify(fakeJavaBackend).addStepDefinition(
                 eq("^a String \"([^\"]*)\"$"),
