@@ -72,18 +72,6 @@ public abstract class SpringStep<T, TT> extends Assertions implements En {
         }
         return content;
 
-
-//        InputStream resourceAsStream = Meetings.class.getClassLoader().getResourceAsStream("redbook/comparison/meetings/" + envCode + "-meetings.json");
-//        try {
-//            int bytesAvailable = resourceAsStream.available();
-//            byte[] b = new byte[bytesAvailable];
-//            int read = resourceAsStream.read(b);
-//            String meetingData = new String(b, StandardCharsets.UTF_8);
-//            envStrings.put(envCode, meetingData);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
 }
