@@ -166,7 +166,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <reportFormat>plain</reportFormat>
-                    <printSummary>false</printSummary>
+                    <printSummary>true</printSummary>
                     <testFailureIgnore>true</testFailureIgnore>
                     <properties>
                         <property>
