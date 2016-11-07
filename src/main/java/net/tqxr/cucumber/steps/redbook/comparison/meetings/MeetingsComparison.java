@@ -4,20 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.tqxr.cucumber.support.DataContainer;
 import net.tqxr.cucumber.support.SpringStep;
 import net.tqxr.lib.redbook.Meetings;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MeetingsComparison extends SpringStep<Meetings, Meetings> {
 
-    private HashMap<String, String> envStrings = new HashMap<>();
+    private RestTemplate restTemplate = new RestTemplate();
+
     private Meetings theSourceMeetings;
     private Meetings theComparisonMeetings;
+
+    private HashMap<String, Meetings> meetingsMap = new HashMap<>();
 
     public MeetingsComparison(Meetings meetings, DataContainer<Meetings> dataContainer) {
         this.dataContainer = dataContainer;
@@ -35,61 +35,47 @@ public class MeetingsComparison extends SpringStep<Meetings, Meetings> {
     private void acquireDataFromServer(String serverName) {
 
         String fullUrl = String.format("https://%s//v1/info-service/racing/dates/today/meetings", serverName);
+        Meetings theMeetings = restTemplate.getForObject(fullUrl, Meetings.class);
 
-        try {
+        assertThat(theMeetings)
+                .withFailMessage("Meetings object returned null")
+                .isNotNull();
 
-            URL url = new URL(fullUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                    (conn.getInputStream())));
-
-            StringBuilder meetingData = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                meetingData.append(output);
-            }
-
-            envStrings.put(serverName, meetingData.toString());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        meetingsMap.put(serverName, theMeetings);
 
     }
 
     private void acquireData(String envCode) {
 
         String envDataString = getStringResource("redbook/comparison/meetings/" + envCode + "-meetings.json");
-        envStrings.put(envCode, envDataString);
+
+        assertThat(envDataString)
+                .withFailMessage(
+                        "\n|\t\tData for " + envCode + " is not present in the resources folder.\n"
+                        + "|\t\tRun the 'curl-the-data.sh' script in resources/redbook/comparison/meetings to get it."
+                )
+                .isNotEmpty();
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Meetings theMeetings = mapper.readValue(envDataString, Meetings.class);
+            meetingsMap.put(envCode, theMeetings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     private void compareData() {
 
-        try {
+        ArrayList<String> envs = new ArrayList<>();
+        meetingsMap.keySet().forEach(envs::add);
 
-            ArrayList<String> envs = new ArrayList<>();
-            envStrings.keySet().forEach(envs::add);
+        String srcStringKey = envs.get(0);
+        String cmpStringKey = envs.get(1);
 
-            String srcStringKey = envs.get(0);
-            String cmpStringKey = envs.get(1);
-
-            String srcString = envStrings.get(srcStringKey);
-            String cmpString = envStrings.get(cmpStringKey);
-
-            assertThat(cmpString).isNotEqualTo(srcString);
-
-            ObjectMapper mapper = new ObjectMapper();
-
-            theSourceMeetings = mapper.readValue(srcString, Meetings.class);
-            theComparisonMeetings = mapper.readValue(cmpString, Meetings.class);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        theSourceMeetings = meetingsMap.get(srcStringKey);
+        theComparisonMeetings = meetingsMap.get(cmpStringKey);
 
         assertThat(theSourceMeetings.meetings.size())
                 .isGreaterThan(0);
