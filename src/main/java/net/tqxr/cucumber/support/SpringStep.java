@@ -5,6 +5,13 @@ import net.tqxr.testframework.spring.configuration.CucumberConfiguration;
 import org.assertj.core.api.Assertions;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * A cucumber step class that mixes in the awesomeness of AssertJ assertions.
  * This cucumber step class will also get wiring from Spring
@@ -47,5 +54,36 @@ public abstract class SpringStep<T, TT> extends Assertions implements En {
      * on only the thing we are verifying.
      */
     protected abstract void setUpTestSteps();
+
+    protected String getStringResource(String resourceName) {
+        String content = "";
+        try {
+
+            URL resource = getClass().getClassLoader()
+                    .getResource(resourceName);
+
+            if (null != resource) {
+                URI uri = resource.toURI();
+                content = new String(Files.readAllBytes(Paths.get(uri)));
+            }
+
+        } catch (NullPointerException | URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+
+
+//        InputStream resourceAsStream = Meetings.class.getClassLoader().getResourceAsStream("redbook/comparison/meetings/" + envCode + "-meetings.json");
+//        try {
+//            int bytesAvailable = resourceAsStream.available();
+//            byte[] b = new byte[bytesAvailable];
+//            int read = resourceAsStream.read(b);
+//            String meetingData = new String(b, StandardCharsets.UTF_8);
+//            envStrings.put(envCode, meetingData);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+    }
 
 }

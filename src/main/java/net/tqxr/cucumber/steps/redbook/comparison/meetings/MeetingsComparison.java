@@ -5,12 +5,11 @@ import net.tqxr.cucumber.support.DataContainer;
 import net.tqxr.cucumber.support.SpringStep;
 import net.tqxr.lib.redbook.Meetings;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,40 +27,43 @@ public class MeetingsComparison extends SpringStep<Meetings, Meetings> {
     @Override
     protected void setUpTestSteps() {
         Given("the meetings data from \"(.*)\"", this::acquireData);
+        Given("the meetings data is acquired from \"(.*)\"", this::acquireDataFromServer);
         When("the two are compared", this::compareData);
         Then("they are equivalent", this::dataIsEquivalent);
     }
 
-    private void acquireData(String envCode) {
+    private void acquireDataFromServer(String serverName) {
+
+        String fullUrl = String.format("https://%s//v1/info-service/racing/dates/today/meetings", serverName);
 
         try {
 
-            URL resource = getClass().getClassLoader()
-                    .getResource("redbook/comparison/meetings/" + envCode + "-meetings.json");
+            URL url = new URL(fullUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
 
-            if (null != resource) {
-                URI uri = resource.toURI();
-                String content = new String(Files.readAllBytes(Paths.get(uri)));
-                envStrings.put(envCode, content);
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+
+            StringBuilder meetingData = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                meetingData.append(output);
             }
 
-        } catch (NullPointerException | URISyntaxException | IOException e) {
+            envStrings.put(serverName, meetingData.toString());
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-//        InputStream resourceAsStream = Meetings.class.getClassLoader().getResourceAsStream("redbook/comparison/meetings/" + envCode + "-meetings.json");
-//
-//        try {
-//
-//            int bytesAvailable = resourceAsStream.available();
-//            byte[] b = new byte[bytesAvailable];
-//            int read = resourceAsStream.read(b);
-//            String meetingData = new String(b, StandardCharsets.UTF_8);
-//            envStrings.put(envCode, meetingData);
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+    }
+
+    private void acquireData(String envCode) {
+
+        String envDataString = getStringResource("redbook/comparison/meetings/" + envCode + "-meetings.json");
+        envStrings.put(envCode, envDataString);
 
     }
 
