@@ -1,5 +1,6 @@
 package net.tqxr.cucumber.support;
 
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import net.tqxr.testframework.spring.configuration.CucumberConfiguration;
 import org.assertj.core.api.Assertions;
@@ -54,6 +55,10 @@ public abstract class SpringStep<T, TT> extends Assertions implements En {
      * on only the thing we are verifying.
      */
     protected abstract void setUpTestSteps();
+    protected void throwPending() {
+        throw new PendingException();
+    }
+
 
     protected String getStringResource(String resourceName) {
         String content = "";
