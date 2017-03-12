@@ -1,9 +1,17 @@
 package net.tqxr.cucumber.support;
 
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import net.tqxr.testframework.spring.configuration.CucumberConfiguration;
 import org.assertj.core.api.Assertions;
 import org.springframework.test.context.ContextConfiguration;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * A cucumber step class that mixes in the awesomeness of AssertJ assertions.
@@ -47,5 +55,28 @@ public abstract class SpringStep<T, TT> extends Assertions implements En {
      * on only the thing we are verifying.
      */
     protected abstract void setUpTestSteps();
+    protected void throwPending() {
+        throw new PendingException();
+    }
+
+
+    protected String getStringResource(String resourceName) {
+        String content = "";
+        try {
+
+            URL resource = getClass().getClassLoader()
+                    .getResource(resourceName);
+
+            if (null != resource) {
+                URI uri = resource.toURI();
+                content = new String(Files.readAllBytes(Paths.get(uri)));
+            }
+
+        } catch (NullPointerException | URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+
+    }
 
 }
